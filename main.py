@@ -1,11 +1,16 @@
+import csv
+import pandas as pd
 import click
+import numpy as np
 
-from csvHandler import csvReader
+from Evaluation.Evaluation import landmark2array
+from fileHandler import csvReader, landmarks, lmRows, rows, Landmark
 
 filePath = ''
-predictedFileName = 'Test1.csv'
-evaluationFileName = 'Eval.csv'
-videoPath = ''
+predictedFileName = 'Predict.csv'
+evaluationFileName = 'Test1.csv'
+Video_FILE = "/Mon_vid.mp4"
+maskFile = '4.png'
 
 DEFAULT_CONFIG = {
     'video_extension': 'avi',
@@ -65,5 +70,25 @@ DEFAULT_CONFIG = {
     }
 }
 
-lmRows, scorers = csvReader(fileName)
+# csvIn = pd.read_csv("Test1.csv", "UTF-8")
+# tensor = np.array(csvIn.values)
 
+# with open(evaluationFileName, 'r') as csvfile:
+#     csvreader = csv.reader(csvfile)
+#     # scorers = next(csvreader)
+#
+#     for row in csvreader:
+#         rows.append(row)
+#     rows.pop(1)
+#
+# for row in rows[1:]:
+#     landmarks.clear()
+#     for i in range(1, len(row), 3):
+#         lm = Landmark(rows[0][i], row[i], row[i + 1], row[i + 2])
+#         landmarks.append(lm)
+#     lmRows.append(landmarks)
+
+targetRows = csvReader(evaluationFileName)
+predRows = csvReader(predictedFileName)
+targetTensor = landmark2array(predRows)
+predTensor = landmark2array(targetRows)
