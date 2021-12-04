@@ -4,11 +4,13 @@ import click
 import numpy as np
 
 from Evaluation.Evaluation import landmark2array
+from Evaluation.Visualization import compare
+from Filters.Viterbi import viterbi_path
 from fileHandler import csvReader, landmarks, lmRows, rows, Landmark
 
 filePath = ''
 predictedFileName = 'Predict.csv'
-evaluationFileName = 'Test1.csv'
+evaluationFileName = 'Target.csv'
 Video_FILE = "/Mon_vid.mp4"
 maskFile = '4.png'
 
@@ -90,5 +92,8 @@ DEFAULT_CONFIG = {
 
 targetRows = csvReader(evaluationFileName)
 predRows = csvReader(predictedFileName)
-targetTensor = landmark2array(predRows)
-predTensor = landmark2array(targetRows)
+targetTensor, targetScores = landmark2array(predRows)
+predTensor, predScores = landmark2array(targetRows)
+
+outPoint, outScores = viterbi_path(predTensor, predScores, 3, 30)
+compare(predTensor[:, 5, 0], outPoint[:, 0])

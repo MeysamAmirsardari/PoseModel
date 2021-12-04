@@ -5,11 +5,13 @@ from fileHandler import Landmark
 
 def landmark2array(landmarkList: Landmark):
     coords = np.zeros((len(landmarkList), len(landmarkList[0]), 2))
+    scores = np.zeros((len(landmarkList), len(landmarkList[0])))
 
     for i in range(coords.shape[0]):
         for j in range(coords.shape[1]):
             coords[i, j, :] = np.array([landmarkList[i][j].X, landmarkList[i][j].Y])
-    return coords
+            scores[i, j] = landmarkList[i][j].likelihood
+    return coords, scores
 
 
 def MPJPE(predicted, target, bb_width):

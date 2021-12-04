@@ -14,7 +14,7 @@ from multiprocessing import cpu_count
 from multiprocessing import Pool, get_context
 import pickle
 
-from .common import make_process_fun, natural_keys
+#from .common import make_process_fun, natural_keys
 
 
 def nan_helper(y):
@@ -117,7 +117,8 @@ def viterbi_path(points, scores, n_back=3, thres_dist=30):
 
 def viterbi_path_wrapper(args):
     jix, pts, scs, max_offset, thres_dist = args
-    pts_new, scs_new = viterbi_path(pts, scs, max_offset, thres_dist)
+    # pts_new, scs_new = viterbi_path(pts, scs, max_offset, thres_dist)
+    pts_new, scs_new = viterbi_path(pts, scs, 3, 30)
     return jix, pts_new, scs_new
 
 
@@ -144,7 +145,7 @@ def load_pose_2d(fname):
     return test, metadata
 
 
-def filter_pose_viterbi(config, all_points, bodyparts):
+def filter_pose_viterbi(config, all_points):
     n_frames, n_joints, n_possible, _ = all_points.shape
 
     points_full = all_points[:, :, :, :2]
@@ -171,8 +172,10 @@ def filter_pose_viterbi(config, all_points, bodyparts):
                 for jix in range(n_joints)]
 
     results = pool.imap_unordered(viterbi_path_wrapper, iterable)
-
+    i = 0
     for jix, pts_new, scs_new in tqdm(results, ncols=70):
+        print(i)
+        i += 1
         points[:, jix] = pts_new
         scores[:, jix] = scs_new
 
@@ -367,7 +370,7 @@ def process_session(config, session_path):
     output_folder = os.path.join(session_path, pipeline_pose_filter)
 
     pose_files = glob(os.path.join(pose_folder, '*.h5'))
-    pose_files = sorted(pose_files, key=natural_keys)
+    pose_files = sorted(pose_files)
 
     if len(pose_files) > 0:
         os.makedirs(output_folder, exist_ok=True)
@@ -392,4 +395,4 @@ def process_session(config, session_path):
         write_pose_2d(all_points[:, :, 0], metadata, outpath)
 
 
-filter_pose_all = make_process_fun(process_session)
+#filter_pose_all = make_process_fun(process_session)
