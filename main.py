@@ -2,15 +2,15 @@ import csv
 import pandas as pd
 import click
 import numpy as np
+from fileHandler import Landmark as lm, Landmark
 
-from Evaluation.Evaluation import landmark2array
 from Evaluation.Visualization import compare
 from Filters.Viterbi import viterbi_path
-from fileHandler import csvReader, landmarks, lmRows, rows, Landmark
 
 filePath = ''
 predictedFileName = 'Predict.csv'
-evaluationFileName = 'Target.csv'
+targetFileName = 'Target.csv'
+test = 'Test1.csv'
 Video_FILE = "/Mon_vid.mp4"
 maskFile = '4.png'
 
@@ -72,28 +72,20 @@ DEFAULT_CONFIG = {
     }
 }
 
-# csvIn = pd.read_csv("Test1.csv", "UTF-8")
-# tensor = np.array(csvIn.values)
-
-# with open(evaluationFileName, 'r') as csvfile:
-#     csvreader = csv.reader(csvfile)
-#     # scorers = next(csvreader)
+# targetRows, targetFrameNames = lm.csvReader(targetFileName)
+# predRows, predFrameNames = lm.csvReader(predictedFileName)
 #
-#     for row in csvreader:
-#         rows.append(row)
-#     rows.pop(1)
-#
-# for row in rows[1:]:
-#     landmarks.clear()
-#     for i in range(1, len(row), 3):
-#         lm = Landmark(rows[0][i], row[i], row[i + 1], row[i + 2])
-#         landmarks.append(lm)
-#     lmRows.append(landmarks)
+# labelNames = lm.extractLabelNames(targetRows[1])
+# targetTensor, targetScores = lm.landmark2array(predRows)
+# predTensor, predScores = lm.landmark2array(targetRows)
 
-targetRows = csvReader(evaluationFileName)
-predRows = csvReader(predictedFileName)
-targetTensor, targetScores = landmark2array(predRows)
-predTensor, predScores = landmark2array(targetRows)
+### Just for Test:
+# df = pd.read_csv(test)
+# ten = np.array(df)
+testRows, testFrameNames = lm.csvReaderForLabeled(test)
+testLabelNames = lm.extractLabelNames(testRows[1])
+testTensor, testScores = lm.landmark2array(testRows)
 
-outPoint, outScores = viterbi_path(predTensor, predScores, 3, 30)
-compare(predTensor[:, 5, 0], outPoint[:, 0])
+# outPoint, outScores = viterbi_path(predTensor, predScores, 3, 30)
+# compare(predTensor[:, 5, 0], outPoint[:, 0])
+
