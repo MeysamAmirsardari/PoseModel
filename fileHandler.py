@@ -1,4 +1,6 @@
 import csv
+import re
+
 import pandas as pd
 import numpy as np
 
@@ -64,7 +66,7 @@ class Landmark:
 
         for row in inputData[1:]:
             landmarks.clear()
-            frameNames.append(row[0])
+            frameNames.append(re.sub("[\\\]", "/", row[0]))
             for i in range(1, len(row)-1, 2):
                 step = Landmark(inputData[0, i], row[i], row[i + 1], np.nan)
                 landmarks.append(step)
