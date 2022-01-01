@@ -46,7 +46,11 @@ def RMSE(predicted, target):
     assert predicted.shape == target.shape
 
     step = 0
-    for i in range(predicted.shape[0]):
-        for j in range(predicted[1]):
-            step += np.square(np.linalg.norm(predicted[i, j, :] - target[i, j, :]))
-    return step/(predicted.shape[0]*predicted.shape[1])
+    error = []
+
+    for j in range(predicted.shape[1]):
+        for i in range(predicted[0]):
+            if(~np.isnan(predicted[i, j, :])):
+                step += np.square(np.linalg.norm(predicted[i, j, :] - target[i, j, :]))
+            error.append(step/predicted.shape[0])
+    return error

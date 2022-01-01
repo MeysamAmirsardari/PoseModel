@@ -8,12 +8,12 @@ import numpy as np
 from Preprocessing.augmentor import Augmentation
 from fileHandler import Landmark as lm, Landmark
 
-from Evaluation.Visualization import compare
+#from Evaluation.Visualization import compare
 from Filters.Viterbi import viterbi_path
 
 filePath = ''
 predictedFileName = 'Predict.csv'
-targetFileName = 'Target.csv'
+targetFileName = 'Target1.csv'
 test = 'F:/DLC/Test6.1-MMM-2021-12-18/labeled-data/test1/CollectedData_MMM.csv'
 Video_FILE = "/Mon_vid.mp4"
 maskFile = '4.png'
@@ -76,23 +76,24 @@ DEFAULT_CONFIG = {
     }
 }
 
-# targetRows, targetFrameNames = lm.csvReader(targetFileName)
-# predRows, predFrameNames = lm.csvReader(predictedFileName)
-#
-# labelNames = lm.extractLabelNames(targetRows[1])
-# targetTensor, targetScores = lm.landmark2array(predRows)
-# predTensor, predScores = lm.landmark2array(targetRows)
+targetRows, targetFrameNames = lm.csvReader(targetFileName)
+predRows, predFrameNames = lm.csvReader(predictedFileName)
+
+labelNames = lm.extractLabelNames(targetRows[1])
+targetTensor, targetScores = lm.landmark2array(targetRows)
+predTensor, predScores = lm.landmark2array(targetRows)
+frameIndexList = lm.extractFrameIndex(targetFrameNames)
 
 ### Just for Test:
 # df = pd.read_csv(test)
 # ten = np.array(df)
 
-testRows, testFrameNames = lm.csvReaderForLabeled(test)
-testLabelNames = lm.extractLabelNames(testRows[1])
-testTensor, testScores = lm.landmark2array(testRows)
-
-rootPath = 'F:/DLC/Test6.1-MMM-2021-12-18'
-Augmentation.augmenter(testFrameNames, rootPath)
+# testRows, testFrameNames = lm.csvReaderForLabeled(test)
+# testLabelNames = lm.extractLabelNames(testRows[1])
+# testTensor, testScores = lm.landmark2array(testRows)
+#
+# rootPath = 'F:/DLC/Test6.1-MMM-2021-12-18'
+# Augmentation.augmenter(testFrameNames, rootPath)
 
 
 # outPoint, outScores = viterbi_path(predTensor, predScores, 3, 30)

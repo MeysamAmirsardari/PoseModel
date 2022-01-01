@@ -80,6 +80,14 @@ class Landmark:
             labelNames.append(element.name)
         return labelNames
 
+    def extractFrameIndex(frameNames):
+        idxList = []
+
+        for name in frameNames:
+            txt = re.sub('\D', "", name)
+            step = int(txt[1:])
+            idxList.append(step)
+        return idxList
 
     def saveOutputCSV(self, list):
         # TODO: saving outputs as a .CSV file.
