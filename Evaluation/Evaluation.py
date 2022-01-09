@@ -45,12 +45,26 @@ def OKS(predicted, target, bb_width, k):
 def RMSE(predicted, target):
     assert predicted.shape == target.shape
 
-    step = 0
     error = []
 
     for j in range(predicted.shape[1]):
-        for i in range(predicted[0]):
-            if(~np.isnan(predicted[i, j, :])):
+        step = 0
+        counter = 1
+        for i in range(predicted.shape[0]):
+            if not np.isnan(predicted[i, j]).any():
                 step += np.square(np.linalg.norm(predicted[i, j, :] - target[i, j, :]))
-            error.append(step/predicted.shape[0])
+                counter += 1
+        error.append(step/(counter*predicted.shape[0]))
     return error
+
+def extractSubData(data, frameIdxList):
+    subData = np.zeros((len(frameIdxList), data.shape[1], data.shape[2]))
+    for i in range(len(frameIdxList)):
+        subData[i] = data[frameIdxList[i]]
+    return subData
+
+def tensorIndexFromFrmaeIndex(frameIdxList: list, inputIdxList):
+    outList = []
+    for idx in inputIdxList:
+        outList.append(frameIdxList.index(idx))
+    return outList

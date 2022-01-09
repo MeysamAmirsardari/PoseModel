@@ -4,9 +4,11 @@ import re
 import pandas as pd
 import click
 import numpy as np
-
+import fileHandler
+from Evaluation.Evaluation import extractSubData, tensorIndexFromFrmaeIndex
+from fileHandler import Landmark as lm
+from Evaluation.Comparator import applyThreshold, calculatePredictionError, calculateManualError
 from Preprocessing.augmentor import Augmentation
-from fileHandler import Landmark as lm, Landmark
 
 #from Evaluation.Visualization import compare
 from Filters.Viterbi import viterbi_path
@@ -76,13 +78,13 @@ DEFAULT_CONFIG = {
     }
 }
 
-targetRows, targetFrameNames = lm.csvReader(targetFileName)
-predRows, predFrameNames = lm.csvReader(predictedFileName)
-
-labelNames = lm.extractLabelNames(targetRows[1])
-targetTensor, targetScores = lm.landmark2array(targetRows)
-predTensor, predScores = lm.landmark2array(targetRows)
-frameIndexList = lm.extractFrameIndex(targetFrameNames)
+# targetRows, targetFrameNames = lm.csvReaderForLabeled(targetFileName)
+# predRows, predFrameNames = lm.csvReader(predictedFileName)
+#
+# labelNames = lm.extractLabelNames(targetRows[1])
+# targetTensor, targetScores = lm.landmark2array(targetRows)
+# predTensor, predScores = lm.landmark2array(targetRows)
+# frameIndexList = lm.extractFrameIndex(targetFrameNames)
 
 ### Just for Test:
 # df = pd.read_csv(test)
@@ -98,3 +100,81 @@ frameIndexList = lm.extractFrameIndex(targetFrameNames)
 
 # outPoint, outScores = viterbi_path(predTensor, predScores, 3, 30)
 # compare(predTensor[:, 5, 0], outPoint[:, 0])
+
+####################################################################
+####################################################################
+
+root = 'C:/Users/EMINENT/Desktop/networkOuts/'
+targetFileName = root + 'target.csv'
+predictedFileName = root+'filtered3'+'.csv'
+
+manualTestNum = 1
+thresh = 0.5
+
+manuals = np.zeros((8, 17, 2))
+
+#for i in range(manualTestNum):
+path = 'C:/Users/EMINENT/Desktop/manualTests/'+'manual'+str(0)+'.csv'
+manualRows, targetFrameNames = lm.csvReaderForLabeled(path)
+
+predRows, predFrameNames = lm.csvReader(predictedFileName)
+targetRows, targetFrameNames = lm.csvReaderForLabeled(targetFileName)
+
+#labelNames = lm.extractLabelNames(manuals[0, 1])
+
+targetTensor, targetScores = lm.landmark2array(targetRows)
+predTensor, predScores = lm.landmark2array(predRows)
+manTensor, _ = lm.landmark2array(manualRows)
+
+predArray = applyThreshold(predRows, thresh)
+frameIndexList = lm.extractFrameIndex(targetFrameNames)
+
+MrAlMhmdFrameListAtMain = [3457, 3549, 3680, 3976, 4258, 4545, 4995, 5262]
+MrAlMhmdFrameListAtTarget = tensorIndexFromFrmaeIndex(frameIndexList, MrAlMhmdFrameListAtMain)
+MrAlMhmdFrameListIndex = [27, 28, 29, 31, 32, 34, 35, 40]
+
+manSubData = extractSubData(manTensor, MrAlMhmdFrameListIndex)
+targetSubData = extractSubData(targetTensor, MrAlMhmdFrameListAtTarget)
+
+pred_RMSE = calculatePredictionError(predArray, targetTensor[1:], frameIndexList)
+manTensors = []
+manTensors.append(manSubData)
+manTensors.append(targetSubData)
+manual_RMSE = calculateManualError(manTensors, False)
+
+#%%
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+labels = ['nose', 'L_eye', 'R eye', 'L ear', 'R ear', 'L shoulder', 'R shoulder', 'L elbow',
+          'R elbow', 'L wrist', 'R wrist', 'L hip', 'R hip', 'L knee', 'R knee', 'L ankle',
+          'R ankle'] # = labelNames
+font = {'family': 'serif',
+        'color':  'darkred',
+        'weight': 'normal',
+        'size': 7,
+        }
+
+x = np.arange(len(labels))
+width = 0.35
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width/2, pred_RMSE, width, label='Prediction')
+rects2 = ax.bar(x + width/2, pred_RMSE, width, label='Manual annotation')
+
+ax.set_ylabel('Normalized Error')
+ax.set_title(' Averaged error of predicted')
+ax.set_xticks(x, labels)
+ax.legend()
+
+ax.bar_label(rects1, padding=3)
+ax.bar_label(rects2, padding=3)
+
+fig.tight_layout()
+
+plt.show()
+
+#%%
+
+

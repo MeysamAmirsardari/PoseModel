@@ -1,3 +1,4 @@
+from typing import List, Any
 
 import numpy as np
 
@@ -9,7 +10,7 @@ def applyThreshold(landmarkList, thresh):
 
     for i in range(coords.shape[0]):
         for j in range(coords.shape[1]):
-            if (landmarkList[i][j].likelihood >= thresh):
+            if (float(landmarkList[i][j].likelihood) >= thresh):
                 coords[i, j, :] = np.array([landmarkList[i][j].X, landmarkList[i][j].Y])
             else:
                 coords[i, j, :] = np.array([np.nan, np.nan])
@@ -17,19 +18,33 @@ def applyThreshold(landmarkList, thresh):
 
 
 def calculateManualError(arrays, setMeanAsGroundTruth: bool):
-    error = []
-    mean = np.zeros(arrays.shape[1], arrays.shape[2], arrays.shape[3])
+    ## arrays: A list of numpy arrays
+    error = np.zeros((1, arrays[0].shape[1]))
+    print(error.shape)
+    mean = np.zeros_like(arrays[0])
 
     if setMeanAsGroundTruth:
         for array in arrays:
             mean += array
-        mean = mean/arrays.shape[0]
+        mean = mean / len(arrays)
 
         for array in arrays:
-            error += RMSE(array, mean)
-        error = error/arrays.shape[0]
+            step = np.array(array)
+            error += RMSE(step, mean)
+        error = error / len(arrays)
     else:
         for array in arrays[1:]:
-            error += RMSE(array, arrays[0])
-        error = error/arrays.shape[0]
+            step = np.array(array)
+            error += RMSE(step, arrays[0])
+        error = error / len(arrays)
+    return error
+
+
+def calculatePredictionError(predTensor, targetTensor, frameIndexList):
+    forAnalyze = np.zeros((len(frameIndexList), predTensor.shape[1], predTensor.shape[2]))
+
+    for i in range(len(frameIndexList)):
+        forAnalyze[i, :, :] = predTensor[frameIndexList[i], :, :]
+
+    error = RMSE(forAnalyze, targetTensor)
     return error

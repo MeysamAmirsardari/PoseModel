@@ -55,7 +55,7 @@ class Landmark:
         frameNames.pop(0)
         return lmRows, frameNames
 
-    def csvReaderForLabeled (fileName):
+    def csvReaderForLabeled(fileName):
         csvIn = pd.read_csv(fileName)
         csvIn.fillna(np.nan)
         inputData = np.array(csvIn.values)
