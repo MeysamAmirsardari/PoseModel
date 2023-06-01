@@ -2,8 +2,8 @@ clc; clear;
 
 % Load the embeddings, labels, and video
 tD_embeddings = readmatrix("D:\Downloads\embeds_2d.csv");
-embeddings = readmatrix("D:\Downloads\embeds_3d.csv");  % Assuming embeddings.mat contains the 1000x3 matrix of embeddings
-labels = readmatrix("D:\Downloads\labels.csv");  % Assuming labels.mat contains the 1000x1 vector of labels
+embeddings = readmatrix("D:\Downloads\embeds_3d.csv");  % Assuming embeddings.csv contains the Nx3 matrix of embeddings
+labels = readmatrix("D:\Downloads\labels.csv");  % Assuming labels.csv contains the Nx1 vector of labels
 video = VideoReader('F:\DLC\final\Data\Test103-1DLC_resnet50_Test6.0Dec14shuffle1_200000_labeled.mp4');
 % Assuming video.mp4 is the input video file
 outDir = 'C:\Users\Eminent\Desktop\output.gif';
