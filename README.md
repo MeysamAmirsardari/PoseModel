@@ -1,11 +1,24 @@
 # PoseModel
 
-<img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/poseModel.jpg" width="270" height="270">
+<p align="center">
+  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/poseModel.jpg" width="270" height="270">
+</p>
 
 PoseModel: open-source toolkit for robust, markerless pose estimation and animal behavioral classification, Specialized for datasets with visual occlusion and special conditions.
 
 ### Under Construction...
-* **Warning: This project is still under development and it's not yet ready for real-world usage!** please wait for the first official release... :)
+* **Warning: This project is still under development and it's not yet ready for real-world usage!** Please wait for the first official release... :)
+* more detail will be added after the first official release
+
+This repository contains the implementation of the PoseModel project. This project proposes a novel method for automated classification of behavioral states in non-human models. Our approach leverages spatiotemporal graph modeling, combining variational graph autoencoder (VGAE), HDBSCAN clustering, and RNN seq2seq modeling.
+
+<p align="center">
+  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/pma.jpg" style="max-width: 100%;">
+</p>
+
+<p align="center">
+  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/sam.png" style="max-width: 100%;">
+</p>
 
 
 ## Setup
