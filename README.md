@@ -13,11 +13,11 @@ PoseModel: open-source toolkit for robust, markerless pose estimation and animal
 This repository contains the implementation of the PoseModel project. This project proposes a novel method for automated classification of behavioral states in non-human models. Our approach leverages spatiotemporal graph modeling, combining variational graph autoencoder (VGAE), HDBSCAN clustering, and RNN seq2seq modeling.
 
 <p align="center">
-  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/pma.jpg" style="max-width: 100%;">
+  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/pma.jpg" style="max-width: 70%;">
 </p>
 
 <p align="center">
-  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/sam.png" style="max-width: 100%;">
+  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/sam.png" style="max-width: 270;">
 </p>
 
 
