@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: >-
+  If you use PoseModel in your research, please cite this software and the exact version or commit
+  used in your analysis.
+title: >-
+  PoseModel: Self-Supervised Spatiotemporal Graph Representation Learning for Pose-Based Behavior
+type: software
+authors:
+  - family-names: Amirsardari
+    given-names: Meysam
+repository-code: https://github.com/MeysamAmirsardari/PoseModel
+url: https://github.com/MeysamAmirsardari/PoseModel
+license: MIT
+version: 0.1.0
+date-released: 2024-05-08
+keywords:
+  - animal behavior
+  - pose estimation
+  - representation learning
+  - self-supervised learning
+  - graph neural networks
+  - behavioral clustering
+abstract: >-
+  PoseModel is a self-supervised representation-learning toolkit for discovering behavior from 2D
+  and 3D pose sequences using anatomical graph attention, temporal attention, confidence-aware
+  masked learning, and leakage-safe evaluation.

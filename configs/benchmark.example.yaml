@@ -1,0 +1,80 @@
+version: 1
+name: primate-cross-animal
+window_size: 120
+stride: 30
+seed: 42
+split_unit: animal
+max_windows_per_split: 20000
+few_shot_fractions: [0.01, 0.05, 0.1, 0.25, 1.0]
+
+# Paths are resolved relative to this manifest. Prepared recordings are produced by
+# `posemodel prepare`. Label CSVs contain `frame,label` columns.
+recordings:
+  - id: animal-a-session-1
+    path: ../artifacts/animal-a-session-1.npz
+    labels: ../labels/animal-a-session-1.csv
+    animal_id: animal-a
+    session_id: animal-a-session-1
+    split: train
+  - id: animal-b-session-1
+    path: ../artifacts/animal-b-session-1.npz
+    labels: ../labels/animal-b-session-1.csv
+    animal_id: animal-b
+    session_id: animal-b-session-1
+    split: validation
+  - id: animal-c-session-1
+    path: ../artifacts/animal-c-session-1.npz
+    labels: ../labels/animal-c-session-1.csv
+    animal_id: animal-c
+    session_id: animal-c-session-1
+    split: test
+
+candidates:
+  - name: kinematics
+    kind: kinematics
+  - name: pca-32
+    kind: pca
+    settings:
+      latent_dim: 32
+      seed: 42
+  - name: temporal-autoencoder
+    kind: tcn
+    settings:
+      latent_dim: 32
+      hidden_dim: 128
+      epochs: 20
+      batch_size: 64
+      device: auto
+  - name: posemodel
+    kind: posemodel
+    settings:
+      # Omit `checkpoint` to train strictly on the manifest's training recordings.
+      model:
+        hidden_dim: 192
+        latent_dim: 32
+        depth: 6
+        decoder_depth: 2
+        num_heads: 6
+        dropout: 0.1
+        variational: true
+      epochs: 50
+      patience: 10
+      learning_rate: 0.0003
+      weight_decay: 0.05
+      mask_ratio: 0.6
+      ema_momentum: 0.996
+      batch_size: 64
+      device: auto
+  # CEBRA, Keypoint-MoSeq, or another method can export a single NPZ with train,
+  # validation, and test arrays and enter through kind: imported.
+
+corruptions:
+  - name: missing-30pct
+    kind: missing
+    magnitude: 0.3
+  - name: joint-dropout-30pct
+    kind: joint_dropout
+    magnitude: 0.3
+  - name: jitter-5pct
+    kind: jitter
+    magnitude: 0.05

@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "posemodel"
+version = "0.1.0"
+description = "Self-supervised spatiotemporal graph representation learning for pose-based behavior"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "Meysam Amirsardari"}]
+keywords = ["animal-behavior", "pose-estimation", "self-supervised-learning", "graph-neural-network"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "pyyaml>=6.0",
+  "scikit-learn>=1.4",
+  "scipy>=1.11",
+  "torch>=2.3",
+  "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hatch>=1.12",
+  "mypy>=1.11",
+  "pandas-stubs>=2.2",
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "ruff>=0.6",
+  "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+posemodel = "posemodel.cli:app"
+
+[project.urls]
+Repository = "https://github.com/MeysamAmirsardari/PoseModel"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/posemodel"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["posemodel"]
+
+[[tool.mypy.overrides]]
+module = ["pandas", "pandas.*", "sklearn", "sklearn.*", "yaml"]
+ignore_missing_imports = true

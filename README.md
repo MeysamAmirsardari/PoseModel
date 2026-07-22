@@ -1,59 +1,178 @@
-# PoseModel
-
 <p align="center">
-  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/poseModel.jpg" width="270" height="270">
+  <img src="legacy/UI/poseModel.jpg" width="300" alt="PoseModel logo: a tracked primate skeleton forming a graph">
 </p>
 
-PosModel: Robust Behavioral Latent Embedding Toolkit Based on
-Spatio‑Temporal Graph Modeling
-
-### Under Construction...
-* **Warning: This project is still under development and it's not yet ready for real-world usage!** Please wait for the first official release... :)
-* more detail will be added after the first official release
-
-This repository contains the implementation of the PoseModel project. This project aims to uncover complex behavioral patterns in a novel way by utilizing robust Graph Neural Networks (GNNs) for latent embedding. Through spatiotemporal graph modeling, the proposed method captures intricate relationships in behavioral data, enabling more accurate and insightful analysis.
+<h1 align="center">PoseModel</h1>
 
 <p align="center">
-  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/pma.jpg" style="max-width: 70%;">
+  <strong>From movement to meaningful behavioral representations.</strong><br>
+  Self-supervised spatiotemporal graph learning for 2D and 3D pose sequences.
 </p>
 
 <p align="center">
-  <img src="https://github.com/MeysamAmirsardari/PoseModel/blob/main/UI/sam.png" style="max-width: 270;">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-00a6a6.svg"></a>
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-3776ab.svg">
+  <img alt="Project status: alpha" src="https://img.shields.io/badge/status-alpha-f59e0b.svg">
+  <img alt="Typed with mypy" src="https://img.shields.io/badge/typing-mypy-2a6db2.svg">
 </p>
 
-## What is this?
-Quantifying and interpreting behavior is crucial to reveal various aspects of biological systems involved in behavioral mechanisms. An accurate and measurable description of behavior is essential for many research scenarios in neuroscience, neuroethology, and behavioral science.
+PoseModel learns compact behavioral embeddings directly from pose-estimation trajectories. It
+combines anatomical graph attention, long-range temporal attention, confidence-aware masked
+learning, and an exponential-moving-average teacher in one research-ready Python package. The
+resulting embeddings can be clustered into behavioral states, evaluated with annotations, or used
+as features in downstream neuroscience and ethology workflows.
 
-We present a model for unsupervised latent embedding, clustering, and dynamics analysis of behavioral data. Our innovative spatio-temporal modeling approach utilizes pose-estimated visual data, transforming the variational embedding problem into a graph representation learning task. Leveraging the power of graph neural networks, we introduce the PoseModel, a graph representation learning tool based on a novel architecture as a variational-attentional-graph autoencoder. 
+> **Project status:** PoseModel is an alpha research release. The current package is a clean,
+> tested rewrite; the original experimental implementation remains available in
+> [`legacy/`](legacy/).
 
-The tool's efficiency and agility are enhanced by the ability of the model to be independently applied to pose-estimated recordings of behavior. By considering the natural dependencies and stochastic nature of the data, our modeling method ensures robustness and flexibility across diverse test conditions and experimental settings.
+## See behavior take shape
 
-We prepared a dataset of 460 frames featuring the behavior of two caged monkeys recorded under different conditions to train our pose-estimation model. The model achieved 9.47 pixels RMS error in HD recording, accurately estimating the poses of the monkeys in 25 hours of recorded behavior. This 25-hour dataset is used to train and evaluate the effectiveness of the PoseModel in the next stage.
+<p align="center">
+  <img src="legacy/UI/pma.jpg" width="100%" alt="PoseModel behavioral-state estimation with tracked keypoints and two latent-space views">
+</p>
 
-The embedding model showed a satisfactory performance on data from monkeys, mice, and humans, and enables behavioral clustering and dynamics analysis. The embeddings are consistent across sessions and different animals and prove valuable in downstream tasks like behavioral state estimation and hierarchical analysis.
+<p align="center"><em>
+  Pose tracking, latent trajectories, and discovered behavioral states from the original
+  PoseModel experiments. The current package turns this research workflow into a reproducible API
+  and benchmark.
+</em></p>
 
-## Setup
-### Install prerequisite libraries
+## Why PoseModel?
 
-To run PoseModel, install it locally using this:
+| Capability | What it provides |
+|---|---|
+| Anatomical graph modeling | Learns relationships defined by the skeleton instead of treating keypoints as an unstructured vector. |
+| Long-range motion context | Models temporal structure across each behavioral window. |
+| Confidence-aware learning | Preserves missingness and excludes unobserved targets from reconstruction losses. |
+| Masked teacher-student objective | Learns contextual motion features from incomplete and noisy tracking data. |
+| Compact window embeddings | Produces fixed-size representations for clustering, visualization, and prediction. |
+| Leakage-safe benchmarking | Compares methods across held-out animals, sessions, or recordings using identical windows. |
 
+The model factorizes spatial and temporal reasoning rather than building one enormous dense graph
+for every video window. This keeps the inductive bias anatomically meaningful and the
+implementation practical on CPU, CUDA, and Apple MPS.
+
+## Install
+
+PoseModel requires Python 3.10 or newer. For an editable development installation:
+
+```bash
+git clone https://github.com/MeysamAmirsardari/PoseModel.git
+cd PoseModel
+python -m pip install -e '.[dev]'
 ```
-wget https://github.com/MeysamAmirsardari/PoseModel/blob/main/requirements
+
+## Five-minute workflow
+
+Inspect and prepare a DeepLabCut recording:
+
+```bash
+posemodel inspect path/to/recording.csv
+posemodel prepare path/to/recording.csv artifacts/recording.npz --fps 30
 ```
 
-Pip install libraries:
-```
-pip install -r requirements.txt
-```
+Train, embed, and discover behavioral states:
 
-### Download and unzip contents from GitHub repo
-Download and unzip contents from this repo and open up the command prompt and traverse to the location where you unzipped the repo contents
-
-### Launch PoseModel!
-Use this command to run it on your local machine
-```
-streamlit run PoseModel.py
+```bash
+posemodel train artifacts/recording.npz --config configs/base.yaml --output runs/example
+posemodel embed runs/example/model.pt artifacts/recording.npz embeddings.npz
+posemodel cluster embeddings.npz states.csv
 ```
 
+Each checkpoint records its model configuration and skeleton topology. Each prepared sequence
+carries joint names, individual identities, frame rate, confidence, observed masks, source
+identity, and preprocessing provenance.
 
+## Benchmark representations, not anecdotes
 
+PoseModel includes a reproducible multi-recording benchmark for answering the questions that
+matter: Do the embeddings predict annotated behavior? Are clusters stable? Do they generalize to
+new animals? Are they robust to tracking failures?
+
+```bash
+posemodel benchmark-index \
+  configs/my-benchmark.yaml \
+  benchmarks/window-index.csv
+
+posemodel benchmark \
+  configs/my-benchmark.yaml \
+  --output benchmarks/my-run
+```
+
+The runner evaluates PoseModel alongside kinematic, PCA, and temporal-autoencoder baselines. It can
+also import aligned representations from CEBRA, Keypoint-MoSeq, or another method. Outputs include
+a self-contained HTML report, machine-readable metrics, trained artifacts, and aligned embeddings.
+
+Metrics cover frozen linear probes, k-nearest neighbors, few-shot label efficiency, cluster
+agreement and stability, animal/session leakage, and robustness to missing joints and coordinate
+jitter. Representation fitting and normalization use training data only.
+
+See the [benchmark guide](docs/benchmarking.md) and
+[example manifest](configs/benchmark.example.yaml) for the full protocol.
+
+## Python API
+
+```python
+from posemodel.io import load_dlc
+from posemodel.preprocessing import NormalizeConfig, normalize_pose
+
+sequence = load_dlc("recording.csv", fps=30)
+normalized, transform = normalize_pose(
+    sequence,
+    NormalizeConfig(confidence_threshold=0.2),
+)
+```
+
+The canonical coordinate layout is
+`(frames, individuals, joints, dimensions)`; confidence and observed masks use
+`(frames, individuals, joints)`.
+
+## Architecture and engineering
+
+- Factorized spatial graph attention and temporal attention.
+- Pose and motion streams with a compact window-level latent.
+- Optional variational bottleneck and KL warm-up.
+- Masked coordinate, velocity, bone-length, and teacher-target objectives.
+- Leakage-safe window construction and deterministic evaluation seeds.
+- Typed public package with unit and end-to-end tests.
+- No PyTorch Geometric dependency in the core model.
+
+Read the [architecture rationale](docs/architecture.md), review
+[`CONTRIBUTING.md`](CONTRIBUTING.md), or explore the command line with `posemodel --help`.
+
+<details>
+<summary><strong>A glimpse of the original interactive prototype</strong></summary>
+
+<br>
+<p align="center">
+  <img src="legacy/UI/sam.png" width="900" alt="Historical PoseModel browser interface showing pose inference">
+</p>
+
+This screenshot is preserved as part of the project history. The supported interface in the alpha
+rewrite is the Python package and `posemodel` command-line application.
+
+</details>
+
+## Cite PoseModel
+
+If PoseModel contributes to a publication, please cite the software and the exact released version
+or commit used in the analysis. GitHub exposes the repository's machine-readable
+[`CITATION.cff`](CITATION.cff) through its **Cite this repository** menu.
+
+```bibtex
+@software{amirsardari_posemodel_2024,
+  author  = {Meysam Amirsardari},
+  title   = {PoseModel: Self-Supervised Spatiotemporal Graph Representation Learning for Pose-Based Behavior},
+  year    = {2024},
+  version = {0.1.0},
+  url     = {https://github.com/MeysamAmirsardari/PoseModel}
+}
+```
+
+For archival citation, create a tagged release and connect the repository to Zenodo; then cite the
+version-specific DOI produced by Zenodo instead of the moving repository URL.
+
+## License
+
+PoseModel is available under the [MIT License](LICENSE).

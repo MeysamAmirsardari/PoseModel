@@ -1,0 +1,24 @@
+seed: 42
+window_size: 120
+stride: 30
+batch_size: 16
+epochs: 50
+learning_rate: 0.0003
+weight_decay: 0.05
+mask_ratio: 0.6
+ema_momentum: 0.996
+gradient_clip: 1.0
+model:
+  hidden_dim: 192
+  latent_dim: 32
+  depth: 6
+  num_heads: 6
+  dropout: 0.1
+  variational: true
+loss:
+  reconstruction_weight: 1.0
+  velocity_weight: 0.25
+  bone_weight: 0.1
+  latent_prediction_weight: 1.0
+  kl_weight: 0.001
+  kl_warmup_epochs: 20
