@@ -26,7 +26,22 @@ as features in downstream neuroscience and ethology workflows.
 > tested rewrite; the original experimental implementation remains available in
 > [`legacy/`](legacy/).
 
-## See behavior take shape
+## How it works
+
+<p align="center">
+  <img src="docs/assets/posemodel-how-it-works.gif" width="100%" alt="Animated PoseModel pipeline showing a moving skeleton with masked joints, spatiotemporal graph encoding, a moving latent embedding, and the decoded behavioral-state timeline">
+</p>
+
+<p align="center"><em>
+  Confidence-aware pose windows become anatomical and temporal graph tokens. Masked joints are
+  reconstructed, each window is compressed into a latent representation, and neighboring
+  embeddings reveal persistent behavioral states. The geometry is illustrative, not a benchmark
+  result.
+</em></p>
+
+Regenerate the animation with `python scripts/make_readme_animation.py`.
+
+## Research vision in action
 
 <p align="center">
   <img src="legacy/UI/pma.jpg" width="100%" alt="PoseModel behavioral-state estimation with tracked keypoints and two latent-space views">
