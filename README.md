@@ -39,7 +39,6 @@ as features in downstream neuroscience and ethology workflows.
   result.
 </em></p>
 
-Regenerate the animation with `python scripts/make_readme_animation.py`.
 
 ## Research vision in action
 
